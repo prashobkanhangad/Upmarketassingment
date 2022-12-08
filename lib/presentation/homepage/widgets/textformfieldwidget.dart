@@ -4,8 +4,9 @@ import 'package:upmark_assignment/core/constants.dart';
 
 class textformfieldwidget extends StatelessWidget {
   final String hinttext;
+  final controller;
 
-  const textformfieldwidget({Key? key, required this.hinttext})
+  const textformfieldwidget({Key? key, required this.hinttext, required this.controller})
       : super(key: key);
 
   @override
@@ -13,6 +14,7 @@ class textformfieldwidget extends StatelessWidget {
     return SizedBox(
       height: 40,
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
               vertical: 13.0,

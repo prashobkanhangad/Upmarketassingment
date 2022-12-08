@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:upmark_assignment/core/constants.dart';
+import 'package:upmark_assignment/presentation/homepage/widgets/textformfieldwidget.dart';
 
 class PeopleslistviewWidget extends StatelessWidget {
   const PeopleslistviewWidget({
@@ -68,16 +69,18 @@ class PeopleslistviewWidget extends StatelessWidget {
                       Column(
                         children: [
                           Spacer(),
-                          Container(
-                            height: 20,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                color: kblackcolor,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: const Center(
-                              child: Text(
-                                'EDIT',
-                                style: TextStyle(color: kwhitecolor),
+                          GestureDetector(onTap: () => showeditbottomsheetmethod(context),
+                            child: Container(
+                              height: 20,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  color: kblackcolor,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: const Center(
+                                child: Text(
+                                  'EDIT',
+                                  style: TextStyle(color: kwhitecolor),
+                                ),
                               ),
                             ),
                           ),
@@ -96,5 +99,105 @@ class PeopleslistviewWidget extends StatelessWidget {
           );
         },
         itemCount: 15);
+  }
+  Future<dynamic> showeditbottomsheetmethod(BuildContext context) {
+    final screenwidth = MediaQuery.of(context).size.width;
+    final screenheight = MediaQuery.of(context).size.height;
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: SizedBox(
+            height: 280,
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      'Update Details Of User',
+                      style: textbold20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: screenwidth * 0.4,
+                            height: screenwidth * 0.4,
+                            decoration: BoxDecoration(
+                                color: kgreycolor,
+                                borderRadius: BorderRadius.circular(5)),
+                            child: IconButton(
+                                onPressed: () {}, icon: const Icon(Icons.camera_alt)),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          SizedBox(
+                            width: screenwidth * 0.6 - 30,
+                            height: screenwidth * 0.4,
+                            // color: kgreycolor,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                // textformfieldwidget(controller: name,
+                                //   hinttext: 'Name',
+                                // ),
+                                // textformfieldwidget(
+                                //   hinttext: 'Age',
+                                // ),
+                                // textformfieldwidget(
+                                //   hinttext: 'Adress',
+                                // ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                      width: double.infinity,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: SizedBox(
+                        width: double.maxFinite,
+                        child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: kblackcolor,
+                                foregroundColor: kwhitecolor),
+                            child: const Text(
+                              'Submit',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            )),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
