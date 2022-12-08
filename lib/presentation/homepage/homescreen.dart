@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -25,52 +26,61 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
-                )),
-            icon: const Icon(Icons.arrow_back)),
-        backgroundColor: kblackcolor,
-      ),
-      body: SafeArea(
-        child: ListView(
-          // shrinkWrap: true,
-          children: [
-            GestureDetector(
-              onTap: () => showbottomsheetmethod(context),
-              child: SizedBox(
-                width: double.maxFinite,
-                height: 60,
-                child: Center(
-                    child: Container(
-                  height: 30,
-                  width: 160,
-                  decoration: BoxDecoration(
-                      color: kblackcolor,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      Text(
-                        'Add Peoples',
-                        style: textbold20white,
-                      ),
-                      Icon(
-                        Icons.add,
-                        color: kwhitecolor,
-                      )
-                    ],
+    return StreamBuilder<Object>(
+        stream: FirebaseFirestore.instance
+            .collection('peoples')
+            .orderBy('uid', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => LoginScreen(),
+                      )),
+                  icon: const Icon(Icons.arrow_back)),
+              backgroundColor: kblackcolor,
+            ),
+            body: SafeArea(
+              child: ListView(
+                // shrinkWrap: true,
+                children: [
+                  GestureDetector(
+                    onTap: () => showbottomsheetmethod(context),
+                    child: SizedBox(
+                      width: double.maxFinite,
+                      height: 60,
+                      child: Center(
+                          child: Container(
+                        height: 30,
+                        width: 160,
+                        decoration: BoxDecoration(
+                            color: kblackcolor,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: const [
+                            Text(
+                              'Add Peoples',
+                              style: textbold20white,
+                            ),
+                            Icon(
+                              Icons.add,
+                              color: kwhitecolor,
+                            )
+                          ],
+                        ),
+                      )),
+                    ),
                   ),
-                )),
+                  PeopleslistviewWidget(
+                    snapshot: snapshot,
+                  )
+                ],
               ),
             ),
-            const PeopleslistviewWidget()
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 
   Future<dynamic> showbottomsheetmethod(BuildContext context) {
@@ -171,8 +181,6 @@ class HomeScreen extends StatelessWidget {
                                 ],
                               ),
                             );
-
-                            
                           }),
                           const SizedBox(
                             width: 10,
@@ -230,7 +238,7 @@ class HomeScreen extends StatelessWidget {
                                     .collection('peoples')
                                     .add(toMap());
 
-                                  Navigator.of(context).pop();
+                                Navigator.of(context).pop();
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: kblackcolor,

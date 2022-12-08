@@ -1,14 +1,17 @@
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:upmark_assignment/core/constants.dart';
+import 'package:upmark_assignment/domain/model/model.dart';
 import 'package:upmark_assignment/presentation/homepage/widgets/textformfieldwidget.dart';
 
 class PeopleslistviewWidget extends StatelessWidget {
-  const PeopleslistviewWidget({
-    Key? key,
-  }) : super(key: key);
+  final AsyncSnapshot snapshot;
+  const PeopleslistviewWidget({Key? key, required this.snapshot})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +19,8 @@ class PeopleslistviewWidget extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
+          final data = PeoplesModel.fromMap(snapshot.data!.docs[index].data());
+          // log(data.name);
           return Slidable(
             endActionPane: const ActionPane(
               motion: StretchMotion(),
@@ -44,6 +49,8 @@ class PeopleslistviewWidget extends StatelessWidget {
                         width: 110,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(fit: BoxFit.cover,
+                                image: FileImage(File(data.imgurl))),
                             color: kgreycolor),
                       ),
                       SizedBox(
@@ -51,17 +58,17 @@ class PeopleslistviewWidget extends StatelessWidget {
                       ),
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
-                              'Name of Person',
+                              data.name,
                               style: textbold20,
                             ),
                             Text(
-                              'Age: ',
+                              'Age: ${data.age}',
                               style: textnormal18,
                             ),
                             Text(
-                              'Adress: ',
+                              'Adress: ${data.adress}',
                               style: textnormal16,
                             )
                           ]),
@@ -69,7 +76,8 @@ class PeopleslistviewWidget extends StatelessWidget {
                       Column(
                         children: [
                           Spacer(),
-                          GestureDetector(onTap: () => showeditbottomsheetmethod(context),
+                          GestureDetector(
+                            onTap: () => showeditbottomsheetmethod(context),
                             child: Container(
                               height: 20,
                               width: 40,
@@ -98,8 +106,9 @@ class PeopleslistviewWidget extends StatelessWidget {
             height: 10,
           );
         },
-        itemCount: 15);
+        itemCount: snapshot.data.size);
   }
+
   Future<dynamic> showeditbottomsheetmethod(BuildContext context) {
     final screenwidth = MediaQuery.of(context).size.width;
     final screenheight = MediaQuery.of(context).size.height;
@@ -144,7 +153,8 @@ class PeopleslistviewWidget extends StatelessWidget {
                                 color: kgreycolor,
                                 borderRadius: BorderRadius.circular(5)),
                             child: IconButton(
-                                onPressed: () {}, icon: const Icon(Icons.camera_alt)),
+                                onPressed: () {},
+                                icon: const Icon(Icons.camera_alt)),
                           ),
                           const SizedBox(
                             width: 10,
