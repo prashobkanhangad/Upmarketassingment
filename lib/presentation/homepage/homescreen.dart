@@ -265,7 +265,7 @@ class HomeScreen extends StatelessWidget {
 
                                 // log(DocValues.uid.toString());
 
-                                Navigator.of(context).pop();
+                                Get.back();
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: kblackcolor,

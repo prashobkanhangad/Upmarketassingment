@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 import 'package:upmark_assignment/core/constants.dart';
 import 'package:upmark_assignment/presentation/homepage/homescreen.dart';
@@ -64,12 +67,15 @@ class Otpscreen extends StatelessWidget {
                       // Sign the user in (or link) with the credential
                       await auth.signInWithCredential(credential);
 
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ));
+                      Get.to(
+                        () => HomeScreen(),
+                      );
                     } catch (e) {
-                      print('Wrong Otp');
-                      Fluttertoast.showToast(msg: 'Wrong Otp',gravity: ToastGravity.CENTER, );
+                      log('$e');
+                      Fluttertoast.showToast(
+                        msg: 'Wrong Otp',
+                        gravity: ToastGravity.CENTER,
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

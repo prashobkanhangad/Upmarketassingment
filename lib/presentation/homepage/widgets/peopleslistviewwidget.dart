@@ -28,6 +28,7 @@ class PeopleslistviewWidget extends StatelessWidget {
           final data = PeoplesModel.fromMap(snapshot.data!.docs[index].data());
 
           return Slidable(
+            key: key,
             endActionPane: ActionPane(
               motion: StretchMotion(),
               children: [
@@ -74,7 +75,7 @@ class PeopleslistviewWidget extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: data.imgurl == null
+                                image: data.imgurl == 'null'
                                     ? const AssetImage(
                                             'asset/136-1366211_group-of-10-guys-login-user-icon-png.png')
                                         as ImageProvider
@@ -95,22 +96,30 @@ class PeopleslistviewWidget extends StatelessWidget {
                               'Age: ${data.age}',
                               style: textnormal18,
                             ),
-                            Text(
-                              'Adress: ${data.adress}',
-                              style: textnormal16,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              child: Text(
+                                'Adress: ${data.adress}',
+                                style: const TextStyle(
+                                  overflow: TextOverflow.clip,
+                                  fontSize: 18,
+                                ),
+                                maxLines: 2,
+                              ),
                             )
                           ]),
                       Spacer(),
                       Column(
                         children: [
-                          Spacer(),
+                          //
                           GestureDetector(
                             onTap: () => showeditbottomsheetmethod(context,
                                 age: data.age,
                                 adress: data.adress,
-                                imgurl: data.imgurl,
+                                imageurl: data.imgurl,
                                 name: data.name,
-                                uid: data.uid),
+                                uid: data.uid,
+                                sortid: data.sortid),
                             child: Container(
                               height: 20,
                               width: 40,
@@ -146,8 +155,9 @@ class PeopleslistviewWidget extends StatelessWidget {
       {required name,
       required age,
       required adress,
-      required imgurl,
-      required uid}) {
+      required imageurl,
+      required uid,
+      required sortid}) {
     final TextEditingController nameeditcontroller = TextEditingController();
     final TextEditingController ageeditcontroller = TextEditingController();
     final TextEditingController adresseditcontroller = TextEditingController();
@@ -195,21 +205,23 @@ class PeopleslistviewWidget extends StatelessWidget {
                         children: [
                           Column(
                             children: [
-                              Container(
-                                  width: screenwidth * 0.4,
-                                  height: screenwidth * 0.33,
-                                  decoration: BoxDecoration(
-                                      color: kgreycolor,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: imgurl == null
-                                              ? AssetImage(
-                                                      'asset/136-1366211_group-of-10-guys-login-user-icon-png.png')
-                                                  as ImageProvider
-                                              : NetworkImage(imgurl)),
-                                      borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(5),
-                                          topRight: Radius.circular(5)))),
+                              GetBuilder<peoplegetxController>(
+                                  builder: (getdata) {
+                                return Container(
+                                    width: screenwidth * 0.4,
+                                    height: screenwidth * 0.33,
+                                    decoration: BoxDecoration(
+                                        color: kgreycolor,
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: getdata.userImageUrl == ''
+                                                ? NetworkImage(imageurl)
+                                                : NetworkImage(
+                                                    getdata.userImageUrl)),
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(5),
+                                            topRight: Radius.circular(5))));
+                              }),
                               GestureDetector(
                                 onTap: () => getcontroller.userImagePicker(),
                                 child: Container(
@@ -280,12 +292,14 @@ class PeopleslistviewWidget extends StatelessWidget {
                         child: ElevatedButton(
                             onPressed: () {
                               final updatedfinal = PeoplesModel(
-                                
-                               
                                   age: ageeditcontroller.text,
                                   adress: adresseditcontroller.text,
-                                  imgurl: imgurl,
-                                  name: nameeditcontroller.text);
+                                  imgurl: getcontroller.userImageUrl == ''
+                                      ? imageurl
+                                      : getcontroller.userImageUrl,
+                                  name: nameeditcontroller.text,
+                                  uid: uid,
+                                  sortid: sortid);
 
                               final updatedmap = updatedfinal.toMap();
                               //  log(updatedmap.toString());
@@ -294,6 +308,9 @@ class PeopleslistviewWidget extends StatelessWidget {
                                   .collection('peoples')
                                   .doc(uid)
                                   .update(updatedmap);
+
+                              getcontroller.userImageUrl = '';
+                              Get.back();
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: kblackcolor,
