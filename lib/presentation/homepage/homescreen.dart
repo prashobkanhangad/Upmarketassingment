@@ -1,14 +1,9 @@
-// import 'dart:developer';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:upmark_assignment/core/constants.dart';
 import 'package:upmark_assignment/domain/controller/getxcontroller.dart';
 import 'package:upmark_assignment/domain/model/model.dart';
@@ -44,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                         await FirebaseAuth.instance.signOut();
                         Get.offAll(() => LoginScreen());
                       },
-                      child: Text(
+                      child: const Text(
                         'Signout',
                         style: TextStyle(
                             fontSize: 20,
@@ -99,7 +94,6 @@ class HomeScreen extends StatelessWidget {
 
   Future<dynamic> showbottomsheetmethod(BuildContext context) {
     final screenwidth = MediaQuery.of(context).size.width;
-    final screenheight = MediaQuery.of(context).size.height;
 
     return showModalBottomSheet(
       isScrollControlled: true,
@@ -149,7 +143,7 @@ class HomeScreen extends StatelessWidget {
                                           image: DecorationImage(
                                             fit: BoxFit.cover,
                                             image: getdata.imageurl == null
-                                                ? AssetImage(
+                                                ? const AssetImage(
                                                         'asset/136-1366211_group-of-10-guys-login-user-icon-png.png')
                                                     as ImageProvider
                                                 : FileImage(
@@ -217,7 +211,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 textformfieldwidget(
                                   
-                                  hinttext: 'Adress',
+                                  hinttext: 'Place',
                                   controller: adresscontroller,
                                 ),
                               ],

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:upmark_assignment/core/constants.dart';
 
@@ -29,7 +28,7 @@ class textformfieldwidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
             ),
             hintText: hinttext,
-            hintStyle: TextStyle(color: kblackcolor)),
+            hintStyle: const TextStyle(color: kblackcolor)),
       ),
     );
   }

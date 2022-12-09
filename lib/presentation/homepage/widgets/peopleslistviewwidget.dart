@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -30,14 +28,14 @@ class PeopleslistviewWidget extends StatelessWidget {
           return Slidable(
             key: key,
             endActionPane: ActionPane(
-              motion: StretchMotion(),
+              motion: const StretchMotion(),
               children: [
                 Expanded(
                   child: SizedBox(
                     width: 30,
                     child: IconButton(
                         onPressed: () {
-                          print('Delete');
+                          // print('Delete');
 
                           final docUser = FirebaseFirestore.instance
                               .collection('peoples')
@@ -45,7 +43,7 @@ class PeopleslistviewWidget extends StatelessWidget {
 
                           docUser.delete();
                         },
-                        icon: Icon(Icons.delete, size: 25)),
+                        icon: const Icon(Icons.delete, size: 25)),
                   ),
                 ),
                 const Expanded(
@@ -75,7 +73,7 @@ class PeopleslistviewWidget extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: data.imgurl == 'null'
+                                image: data.imgurl == null
                                     ? const AssetImage(
                                             'asset/136-1366211_group-of-10-guys-login-user-icon-png.png')
                                         as ImageProvider
@@ -86,7 +84,7 @@ class PeopleslistviewWidget extends StatelessWidget {
                         width: 10,
                       ),
                       Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
                               data.name,
@@ -99,7 +97,7 @@ class PeopleslistviewWidget extends StatelessWidget {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.45,
                               child: Text(
-                                'Adress: ${data.adress}',
+                                'Place: ${data.adress}',
                                 style: const TextStyle(
                                   overflow: TextOverflow.clip,
                                   fontSize: 18,
@@ -108,7 +106,7 @@ class PeopleslistviewWidget extends StatelessWidget {
                               ),
                             )
                           ]),
-                      Spacer(),
+                      const Spacer(),
                       Column(
                         children: [
                           //
@@ -168,7 +166,6 @@ class PeopleslistviewWidget extends StatelessWidget {
     adresseditcontroller.text = adress;
 
     final screenwidth = MediaQuery.of(context).size.width;
-    final screenheight = MediaQuery.of(context).size.height;
     return showModalBottomSheet(
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
