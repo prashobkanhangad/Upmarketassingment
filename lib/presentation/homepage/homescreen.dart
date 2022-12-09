@@ -1,4 +1,5 @@
 // import 'dart:developer';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,16 +30,29 @@ class HomeScreen extends StatelessWidget {
     return StreamBuilder<Object>(
         stream: FirebaseFirestore.instance
             .collection('peoples')
-            .orderBy('uid', descending: true)
+            .orderBy('sortid', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           return Scaffold(
             appBar: AppBar(
-              leading: IconButton(
-                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
+              automaticallyImplyLeading: false,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: TextButton(
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Get.offAll(() => LoginScreen());
+                      },
+                      child: Text(
+                        'Signout',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: kwhitecolor),
                       )),
-                  icon: const Icon(Icons.arrow_back)),
+                )
+              ],
               backgroundColor: kblackcolor,
             ),
             body: SafeArea(
@@ -135,8 +149,8 @@ class HomeScreen extends StatelessWidget {
                                           image: DecorationImage(
                                             fit: BoxFit.cover,
                                             image: getdata.imageurl == null
-                                                ? NetworkImage(
-                                                        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png')
+                                                ? AssetImage(
+                                                        'asset/136-1366211_group-of-10-guys-login-user-icon-png.png')
                                                     as ImageProvider
                                                 : FileImage(
                                                     File(
@@ -149,8 +163,7 @@ class HomeScreen extends StatelessWidget {
                                               topLeft: Radius.circular(5),
                                               topRight: Radius.circular(5)))),
                                   GestureDetector(
-                                    onTap: () =>
-                                        getdata.picmarketimagefromGallery(),
+                                    onTap: () => getdata.userImagePicker(),
                                     child: Container(
                                       width: screenwidth * 0.4,
                                       height: screenwidth * 0.07,
@@ -193,14 +206,17 @@ class HomeScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 textformfieldwidget(
+                                  
                                   hinttext: 'Name',
                                   controller: namecontroller,
                                 ),
                                 textformfieldwidget(
+                                  keyboardtype: TextInputType.number,
                                   hinttext: 'Age',
                                   controller: agecontroller,
                                 ),
                                 textformfieldwidget(
+                                  
                                   hinttext: 'Adress',
                                   controller: adresscontroller,
                                 ),
@@ -220,23 +236,34 @@ class HomeScreen extends StatelessWidget {
                         child: SizedBox(
                           width: double.maxFinite,
                           child: ElevatedButton(
-                              onPressed: () {
-                                // log(data.imageurl!.path.toString());
-                                Map<String, dynamic> toMap() {
-                                  return {
-                                    'uid': DateTime.now()
-                                        .millisecondsSinceEpoch
-                                        .toString(),
-                                    'name': namecontroller.text,
-                                    'age': agecontroller.text,
-                                    'adress': adresscontroller.text,
-                                    'imgurl': data.imageurl!.path,
-                                  };
-                                }
+                              onPressed: () async {
+                                ;
 
-                                FirebaseFirestore.instance
+                                final DocValues = PeoplesModel(
+                                  sortid: DateTime.now()
+                                      .millisecondsSinceEpoch
+                                      .toString(),
+                                  age: agecontroller.text,
+                                  adress: adresscontroller.text,
+                                  imgurl: data.userImageUrl,
+                                  name: namecontroller.text,
+                                );
+
+                                final doc = FirebaseFirestore.instance
                                     .collection('peoples')
-                                    .add(toMap());
+                                    .doc();
+
+                                DocValues.uid = doc.id;
+
+                                final values = DocValues.toMap();
+                                await doc.set(values);
+
+                                namecontroller.text = '';
+                                agecontroller.text = '';
+                                adresscontroller.text = '';
+                                getcontroller.imageurl = null;
+
+                                // log(DocValues.uid.toString());
 
                                 Navigator.of(context).pop();
                               },

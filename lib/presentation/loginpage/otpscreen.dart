@@ -46,7 +46,7 @@ class Otpscreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            const Text('Dont Recieve Code? Resend', style: textbold18),
+            // const Text('Dont Recieve Code? Resend', style: textbold18),
             const SizedBox(
               height: 20,
             ),

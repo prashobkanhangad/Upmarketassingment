@@ -17,45 +17,54 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kwhitecolor,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const SizedBox(height: 20),
-                  TextfieldWidgetMobile(
-                    prefixtext: '+91 ',
-                    hintText: 'MOBILE NUMBER',
-                    controller: numbercontroller,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          onsendotppressed(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: kblackcolor,
-                            foregroundColor: kwhitecolor),
-                        child: const Text(
-                          'Log In',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        )),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
+      body: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return HomeScreen();
+            } else {
+              return SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const SizedBox(height: 20),
+                          TextfieldWidgetMobile(
+                            prefixtext: '+91 ',
+                            hintText: 'MOBILE NUMBER',
+                            controller: numbercontroller,
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          SizedBox(
+                            width: double.maxFinite,
+                            child: ElevatedButton(
+                                onPressed: () async {
+                                  onsendotppressed(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: kblackcolor,
+                                    foregroundColor: kwhitecolor),
+                                child: const Text(
+                                  'Log In',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                )),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
+          }),
     );
   }
 

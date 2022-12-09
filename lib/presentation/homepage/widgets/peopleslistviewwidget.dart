@@ -1,17 +1,23 @@
 import 'dart:developer';
-import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:upmark_assignment/core/constants.dart';
+import 'package:upmark_assignment/domain/controller/getxcontroller.dart';
 import 'package:upmark_assignment/domain/model/model.dart';
 import 'package:upmark_assignment/presentation/homepage/widgets/textformfieldwidget.dart';
 
 class PeopleslistviewWidget extends StatelessWidget {
   final AsyncSnapshot snapshot;
-  const PeopleslistviewWidget({Key? key, required this.snapshot})
-      : super(key: key);
+  PeopleslistviewWidget({
+    Key? key,
+    required this.snapshot,
+  }) : super(key: key);
+
+  final getcontroller = Get.put(peoplegetxController());
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +26,31 @@ class PeopleslistviewWidget extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
           final data = PeoplesModel.fromMap(snapshot.data!.docs[index].data());
-          // log(data.name);
+
           return Slidable(
-            endActionPane: const ActionPane(
+            endActionPane: ActionPane(
               motion: StretchMotion(),
               children: [
-                SizedBox(
-                  width: 40,
-                  child: Icon(Icons.delete),
+                Expanded(
+                  child: SizedBox(
+                    width: 30,
+                    child: IconButton(
+                        onPressed: () {
+                          print('Delete');
+
+                          final docUser = FirebaseFirestore.instance
+                              .collection('peoples')
+                              .doc(data.uid);
+
+                          docUser.delete();
+                        },
+                        icon: Icon(Icons.delete, size: 25)),
+                  ),
+                ),
+                const Expanded(
+                  child: SizedBox(
+                    width: 70,
+                  ),
                 ),
               ],
             ),
@@ -49,11 +72,16 @@ class PeopleslistviewWidget extends StatelessWidget {
                         width: 110,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(fit: BoxFit.cover,
-                                image: FileImage(File(data.imgurl))),
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: data.imgurl == null
+                                    ? const AssetImage(
+                                            'asset/136-1366211_group-of-10-guys-login-user-icon-png.png')
+                                        as ImageProvider
+                                    : NetworkImage(data.imgurl, scale: 1.2)),
                             color: kgreycolor),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Column(
@@ -77,7 +105,12 @@ class PeopleslistviewWidget extends StatelessWidget {
                         children: [
                           Spacer(),
                           GestureDetector(
-                            onTap: () => showeditbottomsheetmethod(context),
+                            onTap: () => showeditbottomsheetmethod(context,
+                                age: data.age,
+                                adress: data.adress,
+                                imgurl: data.imgurl,
+                                name: data.name,
+                                uid: data.uid),
                             child: Container(
                               height: 20,
                               width: 40,
@@ -106,10 +139,24 @@ class PeopleslistviewWidget extends StatelessWidget {
             height: 10,
           );
         },
-        itemCount: snapshot.data.size);
+        itemCount: snapshot.data == null ? 0 : snapshot.data.size);
   }
 
-  Future<dynamic> showeditbottomsheetmethod(BuildContext context) {
+  Future<dynamic> showeditbottomsheetmethod(BuildContext context,
+      {required name,
+      required age,
+      required adress,
+      required imgurl,
+      required uid}) {
+    final TextEditingController nameeditcontroller = TextEditingController();
+    final TextEditingController ageeditcontroller = TextEditingController();
+    final TextEditingController adresseditcontroller = TextEditingController();
+
+    nameeditcontroller.text = name;
+
+    ageeditcontroller.text = age;
+    adresseditcontroller.text = adress;
+
     final screenwidth = MediaQuery.of(context).size.width;
     final screenheight = MediaQuery.of(context).size.height;
     return showModalBottomSheet(
@@ -146,15 +193,52 @@ class PeopleslistviewWidget extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: screenwidth * 0.4,
-                            height: screenwidth * 0.4,
-                            decoration: BoxDecoration(
-                                color: kgreycolor,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.camera_alt)),
+                          Column(
+                            children: [
+                              Container(
+                                  width: screenwidth * 0.4,
+                                  height: screenwidth * 0.33,
+                                  decoration: BoxDecoration(
+                                      color: kgreycolor,
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: imgurl == null
+                                              ? AssetImage(
+                                                      'asset/136-1366211_group-of-10-guys-login-user-icon-png.png')
+                                                  as ImageProvider
+                                              : NetworkImage(imgurl)),
+                                      borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(5),
+                                          topRight: Radius.circular(5)))),
+                              GestureDetector(
+                                onTap: () => getcontroller.userImagePicker(),
+                                child: Container(
+                                  width: screenwidth * 0.4,
+                                  height: screenwidth * 0.07,
+                                  decoration: const BoxDecoration(
+                                      color: kblackcolor,
+                                      borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(5),
+                                          bottomRight: Radius.circular(5))),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: const [
+                                      Text(
+                                        'Upload Image',
+                                        style: TextStyle(
+                                            fontSize: 18, color: kwhitecolor),
+                                      ),
+                                      Icon(
+                                        Icons.camera_alt,
+                                        color: kwhitecolor,
+                                        size: 18,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(
                             width: 10,
@@ -165,16 +249,20 @@ class PeopleslistviewWidget extends StatelessWidget {
                             // color: kgreycolor,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: const [
-                                // textformfieldwidget(controller: name,
-                                //   hinttext: 'Name',
-                                // ),
-                                // textformfieldwidget(
-                                //   hinttext: 'Age',
-                                // ),
-                                // textformfieldwidget(
-                                //   hinttext: 'Adress',
-                                // ),
+                              children: [
+                                textformfieldwidget(
+                                  controller: nameeditcontroller,
+                                  hinttext: 'Name',
+                                ),
+                                textformfieldwidget(
+                                  keyboardtype: TextInputType.number,
+                                  controller: ageeditcontroller,
+                                  hinttext: 'Age',
+                                ),
+                                textformfieldwidget(
+                                  controller: adresseditcontroller,
+                                  hinttext: 'Adress',
+                                ),
                               ],
                             ),
                           ),
@@ -190,7 +278,23 @@ class PeopleslistviewWidget extends StatelessWidget {
                       child: SizedBox(
                         width: double.maxFinite,
                         child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              final updatedfinal = PeoplesModel(
+                                
+                               
+                                  age: ageeditcontroller.text,
+                                  adress: adresseditcontroller.text,
+                                  imgurl: imgurl,
+                                  name: nameeditcontroller.text);
+
+                              final updatedmap = updatedfinal.toMap();
+                              //  log(updatedmap.toString());
+
+                              final doc = FirebaseFirestore.instance
+                                  .collection('peoples')
+                                  .doc(uid)
+                                  .update(updatedmap);
+                            },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: kblackcolor,
                                 foregroundColor: kwhitecolor),
