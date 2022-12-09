@@ -1,16 +1,8 @@
-# upmark_assignment
+Upmark Flutter Assignment
+Features Included In this project
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Login Using Your mobile Number with otp validation (Firebase Authentification)
+* You can also login with a Test account ( Mobile Number = 1020304050, otp = 123456 )
+* Add People with image, name, age & place using Add peoples tab
+* Datas of peoples stored in firebase firestore
+* You Can Edit & Delete peoples
